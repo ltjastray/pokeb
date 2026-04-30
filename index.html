@@ -1,1 +1,523 @@
-hallo
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Katalog Menu • Colmek</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+      background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem;
+    }
+
+    .container {
+      max-width: 1100px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 2.5rem;
+      padding: 2rem 2rem 2.5rem;
+      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(to right, #f7971e, #ffd200);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.2rem;
+      text-align: center;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #b0b0c0;
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+      border-bottom: 1px dashed rgba(255, 215, 0, 0.4);
+      padding-bottom: 0.7rem;
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.2rem;
+    }
+
+    .btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0.7rem 2rem;
+      border-radius: 3rem;
+      font-weight: 600;
+      color: #f0f0f0;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.25s;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .btn.active {
+      background: #f7971e;
+      border-color: #f7971e;
+      color: #0a0a0a;
+      box-shadow: 0 0 18px #f7971eaa;
+    }
+
+    .btn:hover {
+      background: #ffb347;
+      border-color: #ffb347;
+      color: #0a0a0a;
+    }
+
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.4rem;
+      margin-top: 0.8rem;
+    }
+
+    .card {
+      background: rgba(20, 20, 40, 0.7);
+      backdrop-filter: blur(12px);
+      border-radius: 1.8rem;
+      padding: 1.5rem 1.2rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+
+    .card:hover {
+      border-color: #f7971e;
+      transform: translateY(-4px);
+      background: rgba(30, 30, 55, 0.8);
+    }
+
+    .card h3 {
+      color: #ffd966;
+      font-size: 1.3rem;
+      font-weight: 600;
+      word-break: break-word;
+    }
+
+    .card a {
+      color: #aaccff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      word-break: break-all;
+      border-bottom: 1px dotted transparent;
+    }
+
+    .card a:hover {
+      color: #ffb347;
+      border-bottom-color: #ffb347;
+    }
+
+    /* admin form */
+    .admin-section {
+      display: none;
+    }
+
+    .admin-section.visible {
+      display: block;
+    }
+
+    .form-panel {
+      background: rgba(10, 10, 24, 0.7);
+      backdrop-filter: blur(20px);
+      border-radius: 2rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      margin-bottom: 1.2rem;
+    }
+
+    input {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 0.8rem 1.2rem;
+      border-radius: 2rem;
+      color: white;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #f7971e;
+      box-shadow: 0 0 12px #f7971e55;
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .admin-table th {
+      text-align: left;
+      color: #ffd966;
+      padding: 0.5rem;
+    }
+
+    .admin-table td {
+      padding: 0.5rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .login-box {
+      max-width: 400px;
+      margin: 2rem auto;
+    }
+
+    .error-message {
+      color: #ff7070;
+      font-size: 0.9rem;
+    }
+
+    footer {
+      margin-top: 2rem;
+      color: #6a6a7a;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="appContainer">
+    <h1>🔥 KATALOG COLMEEK</h1>
+    <p class="subtitle">koleksi link favorit • klik untuk jelajah</p>
+
+    <div class="nav-buttons">
+      <button id="showCatalogBtn" class="btn active">📋 Katalog</button>
+      <button id="showAdminBtn" class="btn">🔐 Admin</button>
+    </div>
+
+    <!-- PUBLIC CATALOG -->
+    <div id="catalogSection">
+      <div id="catalogContainer" class="catalog-grid">
+        <!-- rendered by js -->
+      </div>
+    </div>
+
+    <!-- ADMIN SECTION (hidden by default) -->
+    <div id="adminSection" class="admin-section">
+      <!-- LOGIN BOX -->
+      <div id="loginPanel" class="form-panel login-box">
+        <h2 style="color:#ffd966; margin-bottom:1rem;">🔑 Login Admin</h2>
+        <div class="input-group">
+          <input type="text" id="usernameInput" placeholder="Username" autocomplete="off">
+        </div>
+        <div class="input-group">
+          <input type="password" id="passwordInput" placeholder="Password">
+        </div>
+        <button id="loginBtn" class="btn" style="width:100%;">Masuk</button>
+        <p id="loginError" class="error-message"></p>
+        <p style="font-size:0.8rem; color:#888; margin-top:0.6rem;">default: admin / admin123</p>
+      </div>
+
+      <!-- CRUD PANEL (hidden until login) -->
+      <div id="crudPanel" class="hidden">
+        <div class="form-panel">
+          <h2 style="color:#ffd966;">➕ Tambah / Edit Item</h2>
+          <div class="input-group">
+            <input type="text" id="itemName" placeholder="Nama menu">
+          </div>
+          <div class="input-group">
+            <input type="url" id="itemUrl" placeholder="https://...">
+          </div>
+          <input type="hidden" id="editIndex" value="-1">
+          <button id="saveItemBtn" class="btn">💾 Simpan</button>
+          <button id="cancelEditBtn" class="btn" style="background:transparent;">Batal</button>
+          <p id="formError" class="error-message"></p>
+        </div>
+
+        <div style="overflow-x:auto;">
+          <table class="admin-table" id="adminTable">
+            <thead>
+              <tr><th>Nama</th><th>URL</th><th>Aksi</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <button id="logoutBtn" class="btn" style="margin-top:1rem;">🚪 Logout</button>
+      </div>
+    </div>
+  </div>
+  <footer>⚡ static crud json • github pages ready</footer>
+
+  <script>
+    (function() {
+      // ---------- STORAGE KEY ----------
+      const STORAGE_KEY = 'katalog_menus';
+
+      // ---------- DEFAULT DATA (link dari kamu) ----------
+      const DEFAULT_LINKS = [
+        { name: "Pokeb", url: "https://ltjastray.github.io/pokeb/" },
+        { name: "Rumah Bokep - Colmek", url: "https://www.rumahbokepvideo.com/genre/colmek" },
+        { name: "Viral Waptrick", url: "https://viral.waptrick.men/" },
+        { name: "Link Colmek", url: "https://linkcolmek.com/" },
+        { name: "FUQ Colmek", url: "https://www.fuq.com/search/a/colmek" },
+        { name: "Xporn Colmek Muncrat", url: "https://www.xporn.rip/search?q=Colmek+muncrat" },
+        { name: "Indopanas Colmek", url: "https://indopanasid.top/category/bokep-colmek/" },
+        { name: "Dicrotin Colmek", url: "https://dicrotin.com/category/bokep-indonesia/bokep-colmek" },
+        { name: "Mlyuk Cantik Colmek", url: "https://mlyuk.pro/cantik/cantik-colmek-sampai-muncratcolmek" }
+      ];
+
+      // ---------- LOAD DATA ----------
+      function loadData() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          try {
+            return JSON.parse(stored);
+          } catch (e) {
+            return [...DEFAULT_LINKS];
+          }
+        } else {
+          // pertama kali, simpan default
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_LINKS));
+          return [...DEFAULT_LINKS];
+        }
+      }
+
+      function saveData(dataArray) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataArray));
+      }
+
+      // ---------- STATE ----------
+      let menus = loadData();
+      let isLoggedIn = false;
+
+      // ---------- DOM ELEMENTS ----------
+      const catalogSection = document.getElementById('catalogSection');
+      const adminSection = document.getElementById('adminSection');
+      const showCatalogBtn = document.getElementById('showCatalogBtn');
+      const showAdminBtn = document.getElementById('showAdminBtn');
+      const catalogContainer = document.getElementById('catalogContainer');
+      const loginPanel = document.getElementById('loginPanel');
+      const crudPanel = document.getElementById('crudPanel');
+      const usernameInput = document.getElementById('usernameInput');
+      const passwordInput = document.getElementById('passwordInput');
+      const loginBtn = document.getElementById('loginBtn');
+      const loginError = document.getElementById('loginError');
+      const itemName = document.getElementById('itemName');
+      const itemUrl = document.getElementById('itemUrl');
+      const editIndex = document.getElementById('editIndex');
+      const saveItemBtn = document.getElementById('saveItemBtn');
+      const cancelEditBtn = document.getElementById('cancelEditBtn');
+      const formError = document.getElementById('formError');
+      const adminTableBody = document.querySelector('#adminTable tbody');
+      const logoutBtn = document.getElementById('logoutBtn');
+
+      // ---------- RENDER CATALOG ----------
+      function renderCatalog() {
+        if (!catalogContainer) return;
+        if (menus.length === 0) {
+          catalogContainer.innerHTML = '<p style="grid-column:1/-1; text-align:center;">Belum ada menu.</p>';
+          return;
+        }
+        catalogContainer.innerHTML = menus.map(item => `
+          <div class="card">
+            <h3>${escapeHTML(item.name)}</h3>
+            <a href="${escapeHTML(item.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(item.url)}</a>
+          </div>
+        `).join('');
+      }
+
+      // ---------- RENDER ADMIN TABLE ----------
+      function renderAdminTable() {
+        if (!adminTableBody) return;
+        if (menus.length === 0) {
+          adminTableBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Tidak ada data.</td></tr>';
+          return;
+        }
+        adminTableBody.innerHTML = menus.map((item, idx) => `
+          <tr>
+            <td>${escapeHTML(item.name)}</td>
+            <td style="font-size:0.8rem;">${escapeHTML(item.url)}</td>
+            <td>
+              <button class="btn" data-edit="${idx}" style="padding:0.3rem 1rem;">✏️</button>
+              <button class="btn" data-delete="${idx}" style="padding:0.3rem 1rem;">🗑️</button>
+            </td>
+          </tr>
+        `).join('');
+
+        // attach events
+        document.querySelectorAll('[data-edit]').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const idx = parseInt(e.target.getAttribute('data-edit'), 10);
+            populateEditForm(idx);
+          });
+        });
+        document.querySelectorAll('[data-delete]').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const idx = parseInt(e.target.getAttribute('data-delete'), 10);
+            deleteItem(idx);
+          });
+        });
+      }
+
+      function populateEditForm(index) {
+        const item = menus[index];
+        if (!item) return;
+        itemName.value = item.name;
+        itemUrl.value = item.url;
+        editIndex.value = index;
+      }
+
+      function resetForm() {
+        itemName.value = '';
+        itemUrl.value = '';
+        editIndex.value = '-1';
+        formError.textContent = '';
+      }
+
+      // ---------- CRUD OPERATIONS ----------
+      function addOrUpdateItem(name, url, index = -1) {
+        if (!name.trim() || !url.trim()) {
+          formError.textContent = 'Nama dan URL wajib diisi.';
+          return false;
+        }
+        try {
+          new URL(url);
+        } catch (_) {
+          formError.textContent = 'Format URL tidak valid.';
+          return false;
+        }
+
+        if (index >= 0 && index < menus.length) {
+          // update
+          menus[index] = { name: name.trim(), url: url.trim() };
+        } else {
+          // create
+          menus.push({ name: name.trim(), url: url.trim() });
+        }
+        saveData(menus);
+        resetForm();
+        renderCatalog();
+        renderAdminTable();
+        formError.textContent = '';
+        return true;
+      }
+
+      function deleteItem(index) {
+        if (index >= 0 && index < menus.length) {
+          menus.splice(index, 1);
+          saveData(menus);
+          renderCatalog();
+          renderAdminTable();
+        }
+      }
+
+      // ---------- LOGIN / LOGOUT ----------
+      function attemptLogin() {
+        const user = usernameInput.value.trim();
+        const pass = passwordInput.value.trim();
+        if (user === 'admin' && pass === 'admin123') {
+          isLoggedIn = true;
+          loginPanel.classList.add('hidden');
+          crudPanel.classList.remove('hidden');
+          loginError.textContent = '';
+          renderAdminTable();
+        } else {
+          loginError.textContent = 'Username atau password salah.';
+        }
+      }
+
+      function logout() {
+        isLoggedIn = false;
+        loginPanel.classList.remove('hidden');
+        crudPanel.classList.add('hidden');
+        usernameInput.value = '';
+        passwordInput.value = '';
+        loginError.textContent = '';
+        resetForm();
+        // tetap di section admin (user bisa pindah manual)
+      }
+
+      // ---------- NAVIGATION ----------
+      function showCatalog() {
+        catalogSection.style.display = 'block';
+        adminSection.classList.remove('visible');
+        showCatalogBtn.classList.add('active');
+        showAdminBtn.classList.remove('active');
+      }
+
+      function showAdmin() {
+        catalogSection.style.display = 'none';
+        adminSection.classList.add('visible');
+        showAdminBtn.classList.add('active');
+        showCatalogBtn.classList.remove('active');
+        if (isLoggedIn) {
+          loginPanel.classList.add('hidden');
+          crudPanel.classList.remove('hidden');
+          renderAdminTable();
+        } else {
+          loginPanel.classList.remove('hidden');
+          crudPanel.classList.add('hidden');
+        }
+      }
+
+      // ---------- HELPERS ----------
+      function escapeHTML(str) {
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      // ---------- EVENT LISTENERS ----------
+      showCatalogBtn.addEventListener('click', showCatalog);
+      showAdminBtn.addEventListener('click', showAdmin);
+      loginBtn.addEventListener('click', attemptLogin);
+      logoutBtn.addEventListener('click', logout);
+
+      saveItemBtn.addEventListener('click', () => {
+        const idx = parseInt(editIndex.value, 10);
+        addOrUpdateItem(itemName.value, itemUrl.value, idx >= 0 ? idx : -1);
+      });
+
+      cancelEditBtn.addEventListener('click', resetForm);
+
+      // ---------- INIT ----------
+      renderCatalog();
+      // pastikan admin section tersembunyi saat awal
+      adminSection.classList.remove('visible');
+    })();
+  </script>
+</body>
+</html>
