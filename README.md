@@ -11,7 +11,9 @@ Project ini sudah dipisah menjadi file statis yang bisa langsung dibaca GitHub P
 ## Login demo
 
 - Username: `admin`
-- Password: `admin123`
+- Password: `****`
+- const ADMIN_USERNAME = "admin";
+- const ADMIN_PASSWORD_SHA256 = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c7xxxx";
 
 Password tidak disimpan sebagai teks polos di `app.js`, tetapi dibandingkan dengan hash SHA-256. Ini hanya obfuscation ringan untuk static site, bukan keamanan backend sungguhan.
 
