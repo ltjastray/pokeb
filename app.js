@@ -4,8 +4,8 @@
   const STORAGE_KEY = "katalog_menus_v2";
   const SESSION_KEY = "katalog_admin_session";
   
-  // SOLUSI: Menggunakan CORS proxy agar tidak diblokir browser
-  const EXTERNAL_DATA_URL = "https://api.allorigins.win/raw?url=" + encodeURIComponent("https://copy.zizi.biz.id/save.json-raw");
+  // URL Eksternal (Primary) dan URL Lokal (Fallback)
+  const EXTERNAL_DATA_URL = "https://copy.zizi.biz.id/save.json-raw";
   const LOCAL_DATA_URL = "./data.json";
 
   // Demo credential
@@ -64,13 +64,23 @@
       renderCatalog();
     });
 
+    // Logika Sinkronisasi Data Online
     el.resetPublicBtn.addEventListener("click", async () => {
-      if (!confirm("Reset data lokal dan muat ulang dari sumber asli?")) return;
-      localStorage.removeItem(STORAGE_KEY);
-      state.menus = await fetchDefaultMenus();
-      persistMenus();
-      resetForm();
-      renderAll();
+      if (!confirm("Sinkronisasi data terbaru dari server online? Data lokal saat ini akan ditimpa.")) return;
+      
+      const originalText = el.resetPublicBtn.textContent;
+      el.resetPublicBtn.textContent = "Syncing...";
+      el.resetPublicBtn.disabled = true;
+
+      try {
+        state.menus = await fetchDefaultMenus();
+        persistMenus();
+        resetForm();
+        renderAll();
+      } finally {
+        el.resetPublicBtn.textContent = originalText;
+        el.resetPublicBtn.disabled = false;
+      }
     });
 
     el.loginForm.addEventListener("submit", async (event) => {
@@ -122,6 +132,7 @@
       const json = await response.json();
       if (!Array.isArray(json)) throw new Error("Format JSON eksternal harus berupa array");
       
+      // Memetakan title ke name, dan content ke url
       const mappedData = json.map(item => ({
         name: item.title,
         url: item.content
@@ -131,7 +142,7 @@
       return normalizeMenus(mappedData);
       
     } catch (error) {
-      console.warn("Gagal membaca data dari URL eksternal. Menggunakan fallback data.json lokal.", error);
+      console.warn("Gagal membaca data dari URL eksternal (kemungkinan CORS atau jaringan). Menggunakan fallback data.json lokal.", error);
       
       try {
         const fallbackResponse = await fetch(LOCAL_DATA_URL, { cache: "no-store" });
@@ -139,7 +150,13 @@
         const fallbackJson = await fallbackResponse.json();
         if (!Array.isArray(fallbackJson)) throw new Error("Format data.json lokal harus berupa array");
         
-        return normalizeMenus(fallbackJson);
+        // Memetakan fallback. Mendukung properti name/url atau title/content
+        const mappedFallback = fallbackJson.map(item => ({
+          name: item.name || item.title,
+          url: item.url || item.content
+        }));
+
+        return normalizeMenus(mappedFallback);
       } catch (fallbackError) {
         console.error("Fallback ke data.json lokal juga gagal", fallbackError);
         return [];
@@ -306,6 +323,7 @@
   }
 
   function exportJson() {
+    // Export dengan format properti name dan url
     const dataForFile = state.menus.map(({ name, url }) => ({ name, url }));
     const blob = new Blob([JSON.stringify(dataForFile, null, 2)], { type: "application/json" });
     const objectUrl = URL.createObjectURL(blob);
