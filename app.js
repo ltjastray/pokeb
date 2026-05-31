@@ -5,8 +5,7 @@
   const SESSION_KEY = "katalog_admin_session";
   
   // URL Eksternal (Primary) dan URL Lokal (Fallback)
-  // Menggunakan layanan corsproxy.io untuk membypass batasan CORS
-const EXTERNAL_DATA_URL = "https://corsproxy.io/?https%3A%2F%2Fcopy.zizi.biz.id%2Fsave.json-raw";
+  const EXTERNAL_DATA_URL = "./data-zizi-pokeb.json"; 
   const LOCAL_DATA_URL = "./data.json";
 
   // Demo credential
