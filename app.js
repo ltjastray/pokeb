@@ -3,13 +3,12 @@
 
   const STORAGE_KEY = "katalog_menus_v2";
   const SESSION_KEY = "katalog_admin_session";
-  const EXTERNAL_DATA_URL = "https://copy.zizi.biz.id/save.json-raw";
+  
+  // SOLUSI: Menggunakan CORS proxy agar tidak diblokir browser
+  const EXTERNAL_DATA_URL = "https://api.allorigins.win/raw?url=" + encodeURIComponent("https://copy.zizi.biz.id/save.json-raw");
   const LOCAL_DATA_URL = "./data.json";
 
-  // Demo credential untuk static hosting:
-  // username: admin
-  // password: admin123
-  // SHA-256("admin123")
+  // Demo credential
   const ADMIN_USERNAME = "admin";
   const ADMIN_PASSWORD_SHA256 = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9";
 
@@ -116,24 +115,24 @@
 
   async function fetchDefaultMenus() {
     try {
-      // 1. Coba ambil dari URL eksternal
+      console.log("Mencoba mengambil dari:", EXTERNAL_DATA_URL);
+      
       const response = await fetch(EXTERNAL_DATA_URL, { cache: "no-store" });
       if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
       const json = await response.json();
       if (!Array.isArray(json)) throw new Error("Format JSON eksternal harus berupa array");
       
-      // 2. Mapping format baru (title -> name, content -> url)
       const mappedData = json.map(item => ({
         name: item.title,
         url: item.content
       }));
       
+      console.log("Berhasil fetch eksternal", mappedData);
       return normalizeMenus(mappedData);
       
     } catch (error) {
       console.warn("Gagal membaca data dari URL eksternal. Menggunakan fallback data.json lokal.", error);
       
-      // 3. Fallback jika gagal: muat dari data.json lokal
       try {
         const fallbackResponse = await fetch(LOCAL_DATA_URL, { cache: "no-store" });
         if (!fallbackResponse.ok) throw new Error(`HTTP Error: ${fallbackResponse.status}`);
