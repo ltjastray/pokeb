@@ -6,6 +6,9 @@
   // Menggunakan file JSON hasil sinkronisasi Docker dari zizi.biz.id
   const EXTERNAL_DATA_URL = "./data-zizi-pokeb.json";
   const LOCAL_DATA_URL = "./data.json";
+  
+  // URL Web utama untuk tombol Copy Web
+  const MAIN_WEB_URL = "https://ltjastray.github.io/pokeb/";
 
   const state = {
     menus: [],
@@ -15,6 +18,7 @@
   const el = {
     catalogContainer: document.getElementById("catalogContainer"),
     resetPublicBtn: document.getElementById("resetPublicBtn"),
+    copyWebBtn: document.getElementById("copyWebBtn"),
     searchInput: document.getElementById("searchInput"),
   };
 
@@ -30,6 +34,46 @@
     el.searchInput.addEventListener("input", (event) => {
       state.query = event.target.value.trim().toLowerCase();
       renderCatalog();
+    });
+
+    // Logika tombol Copy Web (Menyalin link website utama)
+    el.copyWebBtn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(MAIN_WEB_URL);
+        const originalText = el.copyWebBtn.textContent;
+        el.copyWebBtn.textContent = "Tersalin!";
+        setTimeout(() => el.copyWebBtn.textContent = originalText, 2000);
+      } catch (err) {
+        console.error("Gagal menyalin URL Web: ", err);
+        alert("Gagal menyalin link.");
+      }
+    });
+
+    // Logika tombol Copy Link untuk masing-masing item (Event Delegation)
+    el.catalogContainer.addEventListener("click", async (event) => {
+      const copyBtn = event.target.closest(".btn-copy-item");
+      if (!copyBtn) return; // Abaikan jika yang diklik bukan tombol copy item
+
+      const urlToCopy = copyBtn.dataset.url;
+      try {
+        await navigator.clipboard.writeText(urlToCopy);
+        const originalText = copyBtn.textContent;
+        copyBtn.textContent = "Tersalin!";
+        copyBtn.style.backgroundColor = "#28a745"; // Opsional: Beri warna hijau saat sukses
+        copyBtn.style.color = "#fff";
+        copyBtn.style.borderColor = "#28a745";
+        
+        // Kembalikan teks dan warna setelah 2 detik
+        setTimeout(() => {
+          copyBtn.textContent = originalText;
+          copyBtn.style.backgroundColor = "";
+          copyBtn.style.color = "";
+          copyBtn.style.borderColor = "";
+        }, 2000);
+      } catch (err) {
+        console.error("Gagal menyalin URL Item: ", err);
+        alert("Gagal menyalin link.");
+      }
     });
 
     // Logika Sinkronisasi Data Online (menarik ulang file JSON terbaru)
@@ -130,7 +174,8 @@
     el.catalogContainer.innerHTML = filtered.map((item) => `
       <article class="card">
         <h3>${escapeHTML(item.name)}</h3>
-        <a href="${escapeAttribute(item.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(item.url)}</a>
+        <a href="${escapeAttribute(item.url)}" target="_blank" rel="noopener noreferrer" style="word-break: break-all; display: block; margin-bottom: 12px;">${escapeHTML(item.url)}</a>
+        <button class="btn btn-secondary btn-copy-item" type="button" data-url="${escapeAttribute(item.url)}" style="width: 100%; margin-top: auto;">Copy Link</button>
       </article>
     `).join("");
   }
