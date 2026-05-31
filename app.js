@@ -3,7 +3,8 @@
 
   const STORAGE_KEY = "katalog_menus_v2";
   const SESSION_KEY = "katalog_admin_session";
-  const DATA_URL = "./data.json";
+  const EXTERNAL_DATA_URL = "https://copy.zizi.biz.id/save.json-raw";
+  const LOCAL_DATA_URL = "./data.json";
 
   // Demo credential untuk static hosting:
   // username: admin
@@ -65,7 +66,7 @@
     });
 
     el.resetPublicBtn.addEventListener("click", async () => {
-      if (!confirm("Reset data lokal dan muat ulang dari data.json?")) return;
+      if (!confirm("Reset data lokal dan muat ulang dari sumber asli?")) return;
       localStorage.removeItem(STORAGE_KEY);
       state.menus = await fetchDefaultMenus();
       persistMenus();
@@ -104,7 +105,7 @@
         const parsed = JSON.parse(cached);
         if (Array.isArray(parsed)) return normalizeMenus(parsed);
       } catch (error) {
-        console.warn("Data localStorage rusak, memuat ulang data.json", error);
+        console.warn("Data localStorage rusak, memuat ulang data asli", error);
       }
     }
 
@@ -115,14 +116,35 @@
 
   async function fetchDefaultMenus() {
     try {
-      const response = await fetch(DATA_URL, { cache: "no-store" });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      // 1. Coba ambil dari URL eksternal
+      const response = await fetch(EXTERNAL_DATA_URL, { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
       const json = await response.json();
-      if (!Array.isArray(json)) throw new Error("data.json harus berupa array");
-      return normalizeMenus(json);
+      if (!Array.isArray(json)) throw new Error("Format JSON eksternal harus berupa array");
+      
+      // 2. Mapping format baru (title -> name, content -> url)
+      const mappedData = json.map(item => ({
+        name: item.title,
+        url: item.content
+      }));
+      
+      return normalizeMenus(mappedData);
+      
     } catch (error) {
-      console.error("Gagal membaca data.json", error);
-      return [];
+      console.warn("Gagal membaca data dari URL eksternal. Menggunakan fallback data.json lokal.", error);
+      
+      // 3. Fallback jika gagal: muat dari data.json lokal
+      try {
+        const fallbackResponse = await fetch(LOCAL_DATA_URL, { cache: "no-store" });
+        if (!fallbackResponse.ok) throw new Error(`HTTP Error: ${fallbackResponse.status}`);
+        const fallbackJson = await fallbackResponse.json();
+        if (!Array.isArray(fallbackJson)) throw new Error("Format data.json lokal harus berupa array");
+        
+        return normalizeMenus(fallbackJson);
+      } catch (fallbackError) {
+        console.error("Fallback ke data.json lokal juga gagal", fallbackError);
+        return [];
+      }
     }
   }
 
