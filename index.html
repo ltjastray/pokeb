@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Katalog Menu</title>
   <link rel="icon" type="image/png" href="book.ico"/>
-  <meta name="description" content="Katalog link statis dengan CRUD lokal untuk GitHub Pages">
+  <meta name="description" content="Katalog link statis untuk GitHub Pages">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
@@ -28,77 +28,10 @@
 
       <div id="catalogContainer" class="catalog-grid" aria-live="polite"></div>
     </section>
-
-    <section id="adminSection" class="admin-section" aria-labelledby="adminTitle">
-      <h2 id="adminTitle" class="sr-only">Admin</h2>
-
-      <div id="loginPanel" class="panel login-box">
-        <h3>Login Admin</h3>
-        <p class="muted">Akun demo: <code>admin</code> / <code>admin123</code></p>
-
-        <form id="loginForm">
-          <label for="usernameInput">Username</label>
-          <input type="text" id="usernameInput" autocomplete="username" required>
-
-          <label for="passwordInput">Password</label>
-          <input type="password" id="passwordInput" autocomplete="current-password" required>
-
-          <button class="btn btn-full" type="submit">Masuk</button>
-          <p id="loginError" class="error-message" role="alert"></p>
-        </form>
-      </div>
-
-      <div id="crudPanel" class="hidden">
-        <section class="panel">
-          <div class="section-heading">
-            <h3 id="formTitle">Tambah Item</h3>
-            <button id="exportJsonBtn" class="btn btn-secondary" type="button">Export JSON</button>
-          </div>
-
-          <form id="itemForm">
-            <input type="hidden" id="editId" value="">
-
-            <label for="itemName">Nama</label>
-            <input type="text" id="itemName" placeholder="Nama item" required>
-
-            <label for="itemUrl">URL</label>
-            <input type="url" id="itemUrl" placeholder="https://example.com" required>
-
-            <div class="button-row">
-              <button id="saveItemBtn" class="btn" type="submit">Simpan</button>
-              <button id="cancelEditBtn" class="btn btn-secondary" type="button">Batal</button>
-            </div>
-
-            <p id="formError" class="error-message" role="alert"></p>
-            <p class="muted small">Catatan: di GitHub Pages, JavaScript tidak dapat menulis langsung ke <code>data.json</code> di repository. Gunakan tombol Export JSON bila ingin memperbarui file repository secara manual.</p>
-          </form>
-        </section>
-
-        <section class="panel table-panel">
-          <div class="section-heading">
-            <h3>Kelola Data</h3>
-            <button id="logoutBtn" class="btn btn-secondary" type="button">Logout</button>
-          </div>
-
-          <div class="table-wrap">
-            <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>Nama</th>
-                  <th>URL</th>
-                  <th class="actions-col">Aksi</th>
-                </tr>
-              </thead>
-              <tbody id="adminTableBody"></tbody>
-            </table>
-          </div>
-        </section>
-      </div>
-    </section>
   </main>
 
   <footer class="footer">
-    <span>Static CRUD JSON • GitHub Pages</span>
+    <span>Static Katalog JSON • GitHub Pages</span>
   </footer>
 
   <script src="./app.js" defer></script>
